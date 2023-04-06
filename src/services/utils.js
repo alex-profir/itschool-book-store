@@ -4,6 +4,10 @@ export const headers = {
     "Content-Type": "application/json"
 }
 
+export function handleTokenUpdate(token) {
+    headers.Authorization = `Bearer ${token}`;
+}
+
 export async function fetchAndParse(input, init) {
     const response = await fetch(input, init);
     if (response.status >= 400) {
