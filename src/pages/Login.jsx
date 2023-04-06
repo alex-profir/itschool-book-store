@@ -1,15 +1,12 @@
 import { Box, Typography, Link, TextField, Button, Alert } from "@mui/material";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/auth/AuthContext";
-import { useAuth } from "../hooks/useAuth";
 import { useForm } from "../hooks/useForm";
-import { myBooks } from "../services/book";
-import { headers } from "../services/utils";
 
 export default function () {
   const { user, login } = useAuthContext();
-
+  const navigate = useNavigate();
   const { formValues, registerField } = useForm({
     email: "",
     password: "",
@@ -20,30 +17,20 @@ export default function () {
   function onSubmit(event) {
     event.preventDefault();
 
-    console.log(formValues);
     setServerError("");
 
-    myBooks()
-      .then((books) => {
-        console.log("Sunt logat, cartile sunt urmatoarele:");
-        console.log(books);
+    login(formValues)
+      .then(() => {
+        navigate("/");
       })
       .catch((error) => {
-        console.log("Nu sunt logat, eroarea este urmatoarea");
-        console.log(error);
+        setServerError(error);
       });
-
-    login(formValues).catch((error) => {
-      setServerError(error);
-    });
   }
 
   return (
     <Box className="flexCenter" sx={{ mt: 12 }}>
       <Typography variant="h5">Sign In</Typography>
-      {user
-        ? `Logged in With ${user.firstName} ${user.lastName}`
-        : "Not Logged In"}
       <Typography variant="body1">
         or{" "}
         <Link component={NavLink} to="/">

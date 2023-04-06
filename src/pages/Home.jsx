@@ -1,11 +1,11 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/auth/AuthContext";
 import { myBooks } from "../services/book";
 
 export default function () {
-  const { user } = useAuthContext();
-
-  // myBooks()
+  const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
   useEffect(() => {
     myBooks()
       .then((books) => {
@@ -15,7 +15,7 @@ export default function () {
       .catch((err) => {
         console.log("Error!", err);
       });
-  }, []);
+  }, [user]);
 
   return (
     <div>
@@ -23,6 +23,17 @@ export default function () {
         ? `Logged in With ${user.firstName} ${user.lastName}`
         : "Not Logged In"}
       <h1>Home Page</h1>
+      {user ? (
+        <button onClick={logout}>Logout</button>
+      ) : (
+        <button
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          Login
+        </button>
+      )}
     </div>
   );
 }

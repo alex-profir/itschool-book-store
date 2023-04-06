@@ -5,7 +5,11 @@ export const headers = {
 }
 
 export function handleTokenUpdate(token) {
-    headers.Authorization = `Bearer ${token}`;
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete headers.Authorization;
+    }
 }
 
 export async function fetchAndParse(input, init) {
