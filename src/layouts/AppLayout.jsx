@@ -4,9 +4,15 @@ import { Header } from "../components/Header";
 
 export function AppLayout() {
   return (
-    <Box>
+    <Box className="layout-root">
       <Header />
-      <Container maxWidth="xs">
+      <Container
+        maxWidth="lg"
+        sx={{
+          flexGrow: 1,
+          py: 4,
+        }}
+      >
         <Outlet />
       </Container>
     </Box>
