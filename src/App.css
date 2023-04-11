@@ -1,3 +1,11 @@
+/* overwrites */
+
+a {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+/* classes */
 .flexCenter {
   display: flex;
   flex-direction: column;

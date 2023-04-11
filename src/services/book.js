@@ -12,3 +12,10 @@ export function getAllBooks() {
         headers
     });
 }
+
+
+export function getBookById(id) {
+    return fetchAndParse(`${BASE_URL}/book/${id}`, {
+        headers
+    })
+}
