@@ -12,13 +12,29 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import BookIcon from "@mui/icons-material/Book";
+import { useAuthContext } from "../contexts/auth/AuthContext";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const pages = ["Home"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = [
+  {
+    name: "Home",
+    path: "/",
+  },
+  {
+    name: "Manage Books",
+    path: "/manage",
+    auth: true,
+  },
+];
 
 export function Header() {
+  const { user, logout } = useAuthContext();
+
+  const navigate = useNavigate();
+
+  console.log(user);
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -45,8 +61,8 @@ export function Header() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            component={NavLink}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -89,19 +105,35 @@ export function Header() {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              {pages
+                .filter((page) => (page.auth ? Boolean(user) : true))
+                .map((page) => (
+                  <MenuItem
+                    component={NavLink}
+                    to={page.path}
+                    key={page.name}
+                    onClick={handleCloseNavMenu}
+                    sx={{
+                      "&.active": {
+                        "& p": {
+                          color: "text.primary",
+                          fontWeight: "bold",
+                        },
+                        backgroundColor: "action.selected",
+                      },
+                    }}
+                  >
+                    <Typography textAlign="center">{page.name}</Typography>
+                  </MenuItem>
+                ))}
             </Menu>
           </Box>
           <BookIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href=""
+            component={NavLink}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -116,21 +148,41 @@ export function Header() {
             Library
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            {pages
+              .filter((page) => (page.auth ? Boolean(user) : true))
+              .map((page) => (
+                <Button
+                  key={page.name}
+                  LinkComponent={NavLink}
+                  to={page.path}
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: "white",
+                    display: "block",
+                    "&.active": {
+                      color: "text.primary",
+                      fontWeight: "bold",
+                      backgroundColor: "action.selected",
+                    },
+                  }}
+                >
+                  {page.name}
+                </Button>
+              ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Account">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                {user ? (
+                  <Avatar>
+                    {user.firstName[0]}
+                    {user.lastName[0]}
+                  </Avatar>
+                ) : (
+                  <Avatar />
+                )}
               </IconButton>
             </Tooltip>
             <Menu
@@ -149,11 +201,29 @@ export function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              {user ? (
+                <MenuItem
+                  onClick={() => {
+                    logout();
+                  }}
+                >
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                >
+                  <Typography textAlign="center">Login</Typography>
+                </MenuItem>
+              )}
+
+              {/* {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
             </Menu>
           </Box>
         </Toolbar>

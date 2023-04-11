@@ -6,3 +6,9 @@ export function myBooks() {
         headers
     })
 }
+
+export function getAllBooks() {
+    return fetchAndParse(`${BASE_URL}/book/`, {
+        headers
+    });
+}
